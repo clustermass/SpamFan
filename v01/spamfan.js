@@ -144,7 +144,7 @@ if (!String.prototype.includes) {
   '    },',
   '                               ',
   '    "labels": {',
-  '        "spam" : {',
+  '        "ad-spam" : {',
   '            "detectsender" : ["marketing@somedomain.com", "anotherspamdomian"],',
   '            "excludesender" : ["support@somedomain.com"],',
   '            "detectsubject" : ["As seen on TV", "Free vacation"],',
