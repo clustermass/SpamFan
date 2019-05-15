@@ -1,0 +1,37 @@
+{
+    "spamFanConfig" : "true",
+    "daysToKeepEmailsInInbox" : 2,
+    "daysToKeepSpamFanLogs" : 90,
+    "ignoreReadEmails" : true,
+    "skipThreadsWithEmailsMoreThan" : 3,
+    "separateFlaggedEmailsWithAttachments" : true,
+    "flaggedEmailsWithAttachmentsLabel" : "spam-with-files",
+    "allowEmailsFromMyAddressBook": true,
+    "scanSpamFolderForGlobalExclusions": true,
+    "useGlobalExclude" : true,
+                               
+    "globalExclude": {
+        "excludesender" : [".gov"],
+        "excludesubject" : ["bill","invoice", "notice"],
+        "excludebody" : ["bill","invoice", "payment", "amount due", "late fee", "overdraft"]
+    },
+                               
+    "labels": {
+        "spam" : {
+            "detectsender" : ["marketing@somedomain.com", "anotherspamdomian"],
+            "excludesender" : ["support@somedomain.com"],
+            "detectsubject" : ["As seen on TV", "Free vacation"],
+            "excludesubject" : ["Application","follow-up"],
+            "detectbody": ["Our new awesome product","free gift" ],
+            "excludebody" : []
+         },
+        "add-your-own-label" : {
+            "detectsender" : [],
+            "excludesender" : [],
+            "detectsubject" : [],
+            "excludesubject" : [],
+            "detectbody": [],
+            "excludebody" : []
+         }
+       }
+   }
