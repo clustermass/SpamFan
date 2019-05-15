@@ -39,7 +39,7 @@ Exclude rule within label only works for that label AND that rule. It means that
 
 Global exclude works against any detection match if enabled, overriding it. It also used in spam emails (emails that google detected as spam) matching if scanning Spam emails is enabled.
 
-Do not use empty string or just space in rules, as it will immediately match almost any email.
+&#x1F534; Do not use empty string or just space in rules, as it will immediately match almost any email.
 
 HTML tags are not checked in email body, only plain text is extracted (even if email has HTML formatting), so don't use HTML tags in your matching pattern, they will never match anything.
 
