@@ -13,7 +13,9 @@
     "globalExclude": {
         "excludesender" : [".gov"],
         "excludesubject" : ["bill","invoice", "notice"],
-        "excludebody" : ["bill","invoice", "payment", "amount due", "late fee", "overdraft"]
+        "subjectMatchRules" : [],
+        "excludebody" : ["bill","invoice", "payment", "amount due", "late fee", "overdraft"],
+        "bodyMatchRules" : []
     },
                                
     "labels": {
@@ -22,8 +24,10 @@
             "excludesender" : ["support@somedomain.com"],
             "detectsubject" : ["As seen on TV", "Free vacation"],
             "excludesubject" : ["Application","follow-up"],
+            "subjectMatchRules" : ["respectCase", "respectSpaces"],
             "detectbody": ["Our new awesome product","free gift" ],
-            "excludebody" : []
+            "excludebody" : [],
+            "bodyMatchRules" : ["respectCase", "respectSpaces"]
          },
         "add-your-own-label" : {
             "detectsender" : [],
