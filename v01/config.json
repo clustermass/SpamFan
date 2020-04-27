@@ -8,6 +8,7 @@
     "flaggedEmailsWithAttachmentsLabel" : "spam-with-files",
     "allowEmailsFromMyAddressBook": true,
     "scanSpamFolderForGlobalExclusions": true,
+    "overrideGlobalExclusionsForSpamFolder": false,
     "useGlobalExclude" : true,
                                
     "globalExclude": {
@@ -16,6 +17,16 @@
         "subjectMatchRules" : [],
         "excludebody" : ["bill","invoice", "payment", "amount due", "late fee", "overdraft"],
         "bodyMatchRules" : []
+    },
+    "spamFolderOverride": {
+        "detectsender" : [],
+        "excludesender" : [],			
+        "detectsubject" : ["We need your input"],
+        "excludesubject" : [],
+        "subjectMatchRules": [],	
+        "detectbody": [],
+        "excludebody" : [],
+        "bodyMatchRules": []
     },
                                
     "labels": {
@@ -27,7 +38,8 @@
             "subjectMatchRules" : ["respectCase", "respectSpaces"],
             "detectbody": ["Our new awesome product","free gift" ],
             "excludebody" : [],
-            "bodyMatchRules" : ["respectCase", "respectSpaces"]
+            "bodyMatchRules" : ["respectCase", "respectSpaces"],
+            "deleteThreads": false
          },
         "add-your-own-label" : {
             "detectsender" : [],
@@ -35,7 +47,8 @@
             "detectsubject" : [],
             "excludesubject" : [],
             "detectbody": [],
-            "excludebody" : []
+            "excludebody" : [],
+            "deleteThreads": false
          }
        }
    }
