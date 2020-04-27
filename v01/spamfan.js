@@ -23,7 +23,7 @@ const DEFAULT_VALUES = {
     excludebody: [],
     bodyMatchRules: []
   },
-  
+
 };
 
 if (!String.prototype.includes) {
@@ -143,7 +143,7 @@ function getWelcomeEmailBody() {
     "<p> For scanning spam emails there are only three setings that take effect: <br />" +
     "<p> scanSpamFolderForGlobalExclusions will enable option,<br />" +
     "<p> globalExclude - will be used to match false-positive detected spam messages. <br />" +
-    "<p> allowEmailsFromMyAddressBook - if set to true, it will match spam emails senders' addresses to your address book in addition to globalExclude section.<br />" +
+    "<p> allowEmailsFromMyAddressBook - if set to true, it will match spam emails senders' addresses to your address book even before checking against globalExclude section.<br />" +
     "<p> All other settings have no effect on matching false-positive spam emails. <br />" +
     "<p> Setting useGlobalExclude to false won't make any difference on spam scanning, if scanSpamFolderForGlobalExclusions set to true, it will still use globalExclude section regardless. <br />" +
     "<p> Once email is tagged with label, read or unread flag is not taking in consideration when performing acrhiving. (If you want manually assign label to thread after you read it, you can do that and such email will be archived with respect for daysToKeepEmailsInInbox setting.)<br />" +
