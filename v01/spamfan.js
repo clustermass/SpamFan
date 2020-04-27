@@ -12,6 +12,20 @@ const CONSTANTS = {
   }
 };
 
+const DEFAULT_VALUES = {
+  spamFolderOverride: {
+    detectsender: [],
+    excludesender: [],
+    detectsubject: [],
+    excludesubject: [],
+    subjectMatchRules: [],
+    detectbody: [],
+    excludebody: [],
+    bodyMatchRules: []
+  },
+  
+};
+
 if (!String.prototype.includes) {
   String.prototype.includes = function (search, start) {
     if (typeof start !== "number") {
@@ -51,6 +65,7 @@ function getHtmlBody() {
     `<b> Total skipped: ${totalSkipped}</b><br /> ` +
     `<br />` +
     `<b> Total previously labeled archived threads  : ${totalArchived}</b><br /> ` +
+    `<b> Total previously labeled deleted threads  : ${totalDeleted}</b><br /> ` +
     `<br />` +
     `<b> Total retrieved from Gmail Spam folder: ${totalRetrivedFromSpam}</b><br /> ` +
     `<b> Total moved from Gmail Spam to Inbox: ${totalMovedToInbox}</b><br /> ` +
@@ -161,6 +176,16 @@ function getSampleConfig() {
     '        "excludebody" : ["bill","invoice", "payment", "amount due", "late fee", "overdraft"],',
     '        "bodyMatchRules" : []',
     "    },",
+    '    "spamFolderOverride" : {',
+    '            "detectsender" : [],',
+    '            "excludesender" : [],',
+    '            "detectsubject" : [],',
+    '            "excludesubject" : [],',
+    '            "subjectMatchRules" : [],',
+    '            "detectbody": [],',
+    '            "excludebody" : [],',
+    '            "bodyMatchRules" : []',
+    "    },",
     "                               ",
     '    "labels": {',
     '        "ad-spam" : {',
@@ -231,6 +256,7 @@ var skippedExcluded = 0;
 var skippedGlobalExluded = 0;
 var clean = 0;
 var totalArchived = 0;
+var totalDeleted = 0;
 
 var appLog = [];
 const appLogger = function (eventLogRecord) {
@@ -279,6 +305,7 @@ function main() {
   // config.globalExclude
   // config.allowEmailsFromMyAddressBook
   // config.scanSpamFolderForGlobalExclusions
+  // config.overrideGlobalExclusionsForSpamFolder
   // config.daysToKeepSpamFanLogs
 
   if (config && config.spamFanConfig) {
@@ -395,7 +422,9 @@ function main() {
     }
   }
 
-  appLogger("Starting to archive old flagged spam messages from Inbox...");
+  appLogger(
+    "Starting to archive / delete old flagged spam messages from Inbox..."
+  );
 
   allLabels.forEach(function (labelName) {
     query = getSearchQuery(
@@ -408,13 +437,25 @@ function main() {
       `Now querying all threads for label ${labelName} with query: ${query}`
     );
     const labeledThreads = getThreads(query);
+    const deleteThreads = (config.labels[labelName] || {}).deleteThreads;
     appLogger(
-      `Retrieved total of ${labeledThreads.length} old threads for label: ${labelName}`
+      `Retrieved total of ${labeledThreads.length} old threads for label: ${labelName}.`
+    );
+    appLogger(
+      `Label has deleteThreads setting set to ${deleteThreads}, all old messages will be ${
+        deleteThreads ? "deleted" : "archived"
+      }.`
     );
     labeledThreads.forEach(function (thread) {
-      thread.moveToArchive();
-      totalArchived += 1;
-      appLogger(`Labeled thread ${thread.getId()} was archived.`);
+      if (deleteThreads) {
+        thread.moveToTrash();
+        totalDeleted += 1;
+        appLogger(`Labeled thread ${thread.getId()} was deleted.`);
+      } else {
+        thread.moveToArchive();
+        totalArchived += 1;
+        appLogger(`Labeled thread ${thread.getId()} was archived.`);
+      }
     });
   });
 
@@ -564,6 +605,13 @@ function getConfig() {
       config.scanSpamFolderForGlobalExclusions === undefined
         ? false
         : config.scanSpamFolderForGlobalExclusions;
+    config.overrideGlobalExclusionsForSpamFolder =
+      config.overrideGlobalExclusionsForSpamFolder === undefined
+        ? false
+        : config.overrideGlobalExclusionsForSpamFolder;
+    config.spamFolderOverride === undefined
+      ? DEFAULT_VALUES.spamFolderOverride
+      : config.spamFolderOverride;
     config.daysToKeepSpamFanLogs =
       config.daysToKeepSpamFanLogs === undefined
         ? 365
@@ -1141,7 +1189,7 @@ function checkForExclusion(body, exclude, rulesArr) {
 function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
   appLogger(`Starting evaluation for spam thread ${thread.getId()}`);
   const emails = thread.getMessages();
-  // checking agains user address book if it's enabled in config
+  // checking against user address book if it's enabled in config
   if (config.allowEmailsFromMyAddressBook && addressBook.length > 0) {
     appLogger("Evaluating spam emails against user address book.");
     for (var idx in emails) {
@@ -1171,10 +1219,54 @@ function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
     const result = evaluateGlobalExclusions(emails[idx], config.globalExclude);
     if (result) {
       appLogger(
-        `Match was found for spam email in Global exclusion rules. ${thread.getId()} will be moved to Inbox... `
+        `Match was found for spam email in Global exclusion rules for thread ${thread.getId()}.`
+
+        // `Match was found for spam email in Global exclusion rules. ${thread.getId()} will be moved to Inbox... `
       );
-      auxlabels.falsePositiveThreads.push(thread);
-      return;
+      if (config.overrideGlobalExclusionsForSpamFolder) {
+        appLogger(
+          `Option to override Global Exclusions is set to ${config.overrideGlobalExclusionsForSpamFolder}.`
+        );
+        const spamFolderOverride = config.spamFolderOverride;
+        const overrideResult =
+          evaluateSender(
+            emails[idx],
+            spamFolderOverride.detectsender,
+            spamFolderOverride.excludesender
+          ) ||
+          evaluateSubject(
+            emails[idx],
+            spamFolderOverride.detectsubject,
+            spamFolderOverride.excludesubject,
+            spamFolderOverride.subjectMatchRules
+          ) ||
+          evaluateBody(
+            emails[idx],
+            spamFolderOverride.detectbody,
+            spamFolderOverride.excludebody,
+            globalExcludeLabels.bodyMatchRules
+          );
+        // match found that needs to override evaluateGlobalExclusions
+        if (overrideResult) {
+          appLogger(
+            `Match was found in spamFolderOverride label. Thread ${thread.getId()} will not be moved to Inbox... `
+          );
+          return;
+        } else {
+          appLogger(
+            `No match was found in spamFolderOverride label. Thread ${thread.getId()} will be moved to Inbox... `
+          );
+          auxlabels.falsePositiveThreads.push(thread);
+          return;
+        }
+      } else {
+        appLogger(
+          `Option to override Global Exclusions is set to ${config.overrideGlobalExclusionsForSpamFolder}.`
+        );
+        appLogger(`Thread ${thread.getId()} will be moved to Inbox... `);
+        auxlabels.falsePositiveThreads.push(thread);
+        return;
+      }
     }
   }
   appLogger(
