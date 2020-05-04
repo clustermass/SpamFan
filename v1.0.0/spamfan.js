@@ -222,13 +222,7 @@ function getSampleConfig() {
 }
 
 function test() {
-  Logger.log(
-    matchStrings("Maxim Grebennikov, jobs chosen for you", "jobs", [
-      "respectCase",
-      "respectSpaces"
-    ])
-  );
-  Logger.log(GmailApp.search("label:inbox label:spam-hr before:2019/05/14  "));
+ 
 }
 
 function sendWelcomeMail() {
@@ -1274,3 +1268,6 @@ function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
   );
   return;
 }
+
+var spamFan = { matchStrings: matchStrings};
+module.exports = spamFan;
