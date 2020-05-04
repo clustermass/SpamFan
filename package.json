@@ -1,0 +1,27 @@
+{
+  "name": "spamfan",
+  "version": "1.0.0",
+  "description": "Welcome to SpamFan!",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha 'test/**/*.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clustermass/SpamFan.git"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/clustermass/SpamFan/issues"
+  },
+  "homepage": "https://github.com/clustermass/SpamFan#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.2",
+    "sinon": "^9.0.2"
+  }
+}
