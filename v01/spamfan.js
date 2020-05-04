@@ -1244,7 +1244,7 @@ function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
             emails[idx],
             spamFolderOverride.detectbody,
             spamFolderOverride.excludebody,
-            globalExcludeLabels.bodyMatchRules
+            spamFolderOverride.bodyMatchRules
           );
         // match found that needs to override evaluateGlobalExclusions
         if (overrideResult) {
@@ -1254,7 +1254,7 @@ function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
           return;
         } else {
           appLogger(
-            `No match was found in spamFolderOverride label. Thread ${thread.getId()} will be moved to Inbox... `
+            `No match was found in spamFolderOverride label or spamFolderOverride exclusions matched. Thread ${thread.getId()} will be moved to Inbox... `
           );
           auxlabels.falsePositiveThreads.push(thread);
           return;
