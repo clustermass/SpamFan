@@ -1269,5 +1269,5 @@ function evaluateSpamThread(thread, config, labels, auxlabels, addressBook) {
   return;
 }
 
-var spamFan = { matchStrings: matchStrings};
-module.exports = spamFan;
+// var spamFan = { matchStrings: matchStrings};
+// module.exports = spamFan;
