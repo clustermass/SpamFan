@@ -1,4 +1,4 @@
-// v0.1
+// v1.0.0
 // This is SpamFan! Script that helps to keep GMail inbox clean and organized.
 // Author: Maxim Grebenikov, https://github.com/clustermass/SpamFan
 // Found a bug? Have a question or suggestion?  Create Issue: https://github.com/clustermass/SpamFan/issues
