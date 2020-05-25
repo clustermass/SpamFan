@@ -23,7 +23,22 @@ const DEFAULT_VALUES = {
     excludebody: [],
     bodyMatchRules: []
   },
-
+  daysToKeepEmailsInInbox: 365,
+  ignoreReadEmails: true,
+  skipThreadsWithEmailsMoreThan: 10,
+  separateFlaggedEmailsWithAttachments: true,
+  flaggedEmailsWithAttachmentsLabel: "spam-w-att",
+  useGlobalExclude: false,
+  globalExclude:  {
+        excludesender: [],
+        excludesubject: [],
+        excludebody: []
+  },
+  allowEmailsFromMyAddressBook: true,
+  scanSpamFolderForGlobalExclusions: false,
+  overrideGlobalExclusionsForSpamFolder: false,
+  daysToKeepSpamFanLogs: 365,
+  sendLog: true
 };
 
 if (!String.prototype.includes) {
@@ -168,6 +183,7 @@ function getSampleConfig() {
     '    "allowEmailsFromMyAddressBook": true,',
     '    "scanSpamFolderForGlobalExclusions": true,',
     '    "useGlobalExclude" : true,',
+    '    "sendLog" : true,',
     "                               ",
     '    "globalExclude": {',
     '        "excludesender" : [".gov"],',
@@ -301,6 +317,7 @@ function main() {
   // config.scanSpamFolderForGlobalExclusions
   // config.overrideGlobalExclusionsForSpamFolder
   // config.daysToKeepSpamFanLogs
+  // config.sendLog
 
   if (config && config.spamFanConfig) {
     Object.keys(config.labels).forEach(function (label) {
@@ -472,27 +489,29 @@ function main() {
     appLogger(`${oldLogThread.getId()} old log was moved to Trash.`);
   });
 
-  MailApp.sendEmail(Session.getActiveUser().getEmail(), "SpamFan log", "Log", {
-    htmlBody: getHtmlBody(),
-    attachments: [getLogAttachment()]
-  });
+  appLogger(`Sending SpamFan log setting is set to ${config.sendLog}`)
+  if(config.sendLog){
+    MailApp.sendEmail(Session.getActiveUser().getEmail(), "SpamFan log", "Log", {
+      htmlBody: getHtmlBody(),
+      attachments: [getLogAttachment()]
+    });
+    appLogger("Waiting 2 minutes before moving SpamFan log...");
+    Utilities.sleep(120000);
+  }
   appLogger("Finished.");
-  Logger.log("Waiting 10 seconds before moving SpamFan log...");
-
-  Utilities.sleep(10000);
 
   query = `${getSearchQuery("inbox", false, true)} subject:SpamFan log`;
-  Logger.log(`query ${query}`);
+  appLogger(`query ${query}`);
 
   const newSpamFanLogs = getThreads(query);
-  Logger.log(
+  appLogger(
     `Moving ${newSpamFanLogs.length} new SpamFan logs to spamfan label...`
   );
   newSpamFanLogs.forEach(function (newLogThread) {
     newLogThread.addLabel(gMailLabels.spamfan);
     newLogThread.markRead();
     newLogThread.moveToArchive();
-    Logger.log(`${newLogThread.getId()} new log was moved to spamfan label.`);
+    appLogger(`${newLogThread.getId()} new log was moved to spamfan label.`);
   });
 }
 
@@ -528,8 +547,6 @@ function getSearchQuery(label, ignoreRead, after, daysOffset) {
 // }
 
 function getContactsEmails() {
-  //var userEmail = Session.getActiveUser().getEmail();
-  //var aliases = GmailApp.getAliases();
 
   const contacts = ContactsApp.getContacts();
   const contactsEmails = [];
@@ -565,51 +582,55 @@ function getConfig() {
 
     config.daysToKeepEmailsInInbox =
       config.daysToKeepEmailsInInbox === undefined
-        ? 365
+        ? DEFAULT_VALUES.daysToKeepEmailsInInbox
         : config.daysToKeepEmailsInInbox;
     config.ignoreReadEmails =
-      config.ignoreReadEmails === undefined ? true : config.ignoreReadEmails;
+      config.ignoreReadEmails === undefined 
+        ? DEFAULT_VALUES.ignoreReadEmails 
+        : config.ignoreReadEmails;
     config.skipThreadsWithEmailsMoreThan =
       config.skipThreadsWithEmailsMoreThan === undefined
-        ? 10
+        ? DEFAULT_VALUES.skipThreadsWithEmailsMoreThan
         : config.skipThreadsWithEmailsMoreThan;
     config.separateFlaggedEmailsWithAttachments =
       config.separateFlaggedEmailsWithAttachments === undefined
-        ? true
+        ? DEFAULT_VALUES.separateFlaggedEmailsWithAttachments
         : config.separateFlaggedEmailsWithAttachments;
     config.flaggedEmailsWithAttachmentsLabel =
       config.flaggedEmailsWithAttachmentsLabel === undefined
-        ? "spam-w-att"
+        ? DEFAULT_VALUES.flaggedEmailsWithAttachmentsLabel
         : config.flaggedEmailsWithAttachmentsLabel;
     config.useGlobalExclude =
-      config.useGlobalExclude === undefined ? false : config.useGlobalExclude;
+      config.useGlobalExclude === undefined 
+        ? DEFAULT_VALUES.useGlobalExclude 
+        : config.useGlobalExclude;
     config.globalExclude =
       config.globalExclude === undefined
-        ? {
-            excludesender: [],
-            excludesubject: [],
-            excludebody: []
-          }
+        ? DEFAULT_VALUES.globalExclude
         : config.globalExclude;
     config.allowEmailsFromMyAddressBook =
       config.allowEmailsFromMyAddressBook === undefined
-        ? true
+        ? DEFAULT_VALUES.allowEmailsFromMyAddressBook
         : config.allowEmailsFromMyAddressBook;
     config.scanSpamFolderForGlobalExclusions =
       config.scanSpamFolderForGlobalExclusions === undefined
-        ? false
+        ? DEFAULT_VALUES.scanSpamFolderForGlobalExclusions
         : config.scanSpamFolderForGlobalExclusions;
     config.overrideGlobalExclusionsForSpamFolder =
       config.overrideGlobalExclusionsForSpamFolder === undefined
-        ? false
+        ? DEFAULT_VALUES.overrideGlobalExclusionsForSpamFolder
         : config.overrideGlobalExclusionsForSpamFolder;
     config.spamFolderOverride === undefined
-      ? DEFAULT_VALUES.spamFolderOverride
-      : config.spamFolderOverride;
+        ? DEFAULT_VALUES.spamFolderOverride
+        : config.spamFolderOverride;
     config.daysToKeepSpamFanLogs =
       config.daysToKeepSpamFanLogs === undefined
-        ? 365
+        ? DEFAULT_VALUES.daysToKeepSpamFanLogs
         : config.daysToKeepSpamFanLogs;
+    config.sendLog =
+      config.sendLog === undefined
+        ? DEFAULT_VALUES.sendLog
+        : config.sendLog;
     Object.keys(config).forEach(function (key) {
       appLogger(`config value set ${key} to ${config[key]} `);
     });
