@@ -175,7 +175,7 @@ function getWelcomeEmailBody() {
 function getSampleConfig() {
   const configSample = [
     "{",
-    '    "spamFanConfig" : "true",',
+    '    "spamFanConfig" : true,',
     '    "daysToKeepEmailsInInbox" : 2,',
     '    "daysToKeepSpamFanLogs" : 90,',
     '    "ignoreReadEmails" : true,',
@@ -203,6 +203,7 @@ function getSampleConfig() {
     '            "detectbody": [],',
     '            "excludebody" : [],',
     '            "bodyMatchRules" : []',
+    '            "deleteThreads" : false',
     "    },",
     "                               ",
     '    "labels": {',
@@ -225,6 +226,7 @@ function getSampleConfig() {
     '            "detectbody": [],',
     '            "excludebody" : [],',
     '            "bodyMatchRules" : []',
+    '            "deleteThreads" : false',
     "         }",
     "       }",
     "   }"
