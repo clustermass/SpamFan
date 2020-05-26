@@ -3,8 +3,9 @@
 // Author: Maxim Grebennikov, https://github.com/clustermass/SpamFan
 // I don't have time to support this, so I am sorry, probably I won't have time to answer your question.
 // Feel free to contribute, so if you found a bug or have a question or suggestion please create an issue: https://github.com/clustermass/SpamFan/issues
-// and maybe someone from community will fix/creae/address it for you.
+// and maybe someone from community will fix/create/address it for you.
 // Feel free to fork or modify for your own purposes.
+// Short how-to on youtube: https://www.youtube.com/watch?v=12nmjGhTuQ0 
 // Licensed under GNU General Public License v3.0
 
 const CONSTANTS = {

@@ -6,10 +6,11 @@ This script is designed to be executed in Google Script portal (https://script.g
 
 You will need to create new project there and then copy and paste all javascript code.
 
-In order to run/ set triggers use main function.
+In order to run / set triggers use main function.
 
 First run will create welcome email with sample configuration file attached.
 
+Short [How-to on youtube].
 This is simple script to organize Gmail inbox. You create various filters that can match email content such as sender email/domain, subject line and body. After SpamFan matches incoming email, it will flag it with a label, based on your presets. Such labeled Emails will reamin for some time in Inbox, so that you don't miss false-positive detected email, after that SpamFan will archive it, so that such email will be moved out of Inbox. Archived emails are not permanently deleted from GMail box, they can be accessed by clicking on corresponding label or by constructing search query such as label:somelablename. It's recommended to set up script execution 4 times per day with 6 hours interval. Every time script executes, it will create log that will be stored under "spamfan" label. 
 
 To start using spamfan:
