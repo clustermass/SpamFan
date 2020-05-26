@@ -10,6 +10,7 @@
     "scanSpamFolderForGlobalExclusions": true,
     "overrideGlobalExclusionsForSpamFolder": false,
     "useGlobalExclude" : true,
+    "sendLog": true
                                
     "globalExclude": {
         "excludesender" : [".gov"],
