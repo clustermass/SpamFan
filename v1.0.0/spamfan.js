@@ -204,7 +204,6 @@ function getSampleConfig() {
     '            "detectbody": [],',
     '            "excludebody" : [],',
     '            "bodyMatchRules" : []',
-    '            "deleteThreads" : false',
     "    },",
     "                               ",
     '    "labels": {',
