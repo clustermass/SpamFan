@@ -217,6 +217,7 @@ function getSampleConfig() {
     '            "detectbody": ["Our new awesome product","free gift" ],',
     '            "excludebody" : [],',
     '            "bodyMatchRules" : ["respectCase", "respectSpaces"]',
+    '            "deleteThreads" : false',
     "         },",
     '        "add-your-own-label" : {',
     '            "detectsender" : [],',
